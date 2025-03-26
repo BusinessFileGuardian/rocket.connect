@@ -1,18 +1,32 @@
-scrape_configs:
-# if you just have single or multiple, but static instances - you
-# can use the static configuration below.
-- job_name: rocketchat_static
-  static_configs:
-  - targets:
-    - rocketchat1:9458
-    - rocketchat2:9458
+global:
+  scrape_interval: 5s
 
-# If you use a Docker-based setup make sure to use the DNS
-# discovery to always include all available application instances
-# of Rocket.Chat
-- job_name: rocketchat_docker
-  scrape_interval: 30s
-  dns_sd_configs:
-  - names: ["rocketchat"]
-    type: A
-    port: 9458
+scrape_configs:
+  # Job para o Django
+  - job_name: 'django'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['ecommerce:8000']  # Usando o IP diretamente para o Django
+ # Seu serviço Django
+
+  # Job para o Redis (redis_exporter)
+  - job_name: 'redis'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['redis_exporter:9121']  # Seu serviço Redis Exporter
+
+  # Exemplo de configuração estática para Rocket.Chat
+  - job_name: rocketchat_static
+    static_configs:
+      - targets:
+          - rocketchat1:9458
+          - rocketchat2:9458
+
+  # Exemplo de configuração com Docker e DNS SD
+  - job_name: rocketchat_docker
+    scrape_interval: 30s
+    dns_sd_configs:
+      - names: ["rocketchat"]
+        type: A
+        p
+ort: 9458
